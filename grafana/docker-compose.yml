@@ -1,0 +1,39 @@
+# https://docs.influxdata.com/telegraf/v1.14/administration/configuration/
+# https://docs.influxdata.com/influxdb/v1.8/administration/config/
+version: "2"
+services:
+  app:
+    image: grafana/grafana:7.0.6-ubuntu
+    container_name: grafana_app
+    ports:
+      - "3000:3000"
+    networks:
+        - grafananet
+  db:
+    image: influxdb
+    container_name: grafana_db
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "25826:25826/udp"
+#    volumes:
+#      - ./influxdb:/var/lib/influx
+    networks:
+        - grafananet  
+  agent:
+    image: telegraf
+    container_name: grafana_agent
+    ports:
+      - "8125:8125/udp"
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+#    environment:
+#      USER: alice
+#      INFLUX_URL: "http://db:8086"
+#      INFLUX_SKIP_DATABASE_CREATION: "true"
+#      INFLUX_PASSWORD: "monkey123"
+    networks:
+        - grafananet 
+networks:
+  grafananet:
+    driver: bridge
