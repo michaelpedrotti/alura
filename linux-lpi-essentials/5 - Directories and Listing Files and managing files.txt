@@ -1,0 +1,217 @@
+#==========================#
+# 01. Nomeação de arquivos #
+#==========================#
+# root
+$ cd /
+
+# binaries
+$ cd /bin
+
+# configs
+$ cd /etc
+
+# File names are case sensitive
+$ touch myfile.txt
+$ touch MyFile.txt
+
+# charsets invalid to use on file names
+# /, +-_ at the beginning of file name
+# . at the beginning of file name is hidden
+
+# rename file
+$ mv myfile.txt AnotherFile.txt
+
+# rename and move file
+$ mv myfile.txt ./another-directory/another-file.txt
+
+# compile a new binary
+
+$ touch mybinary.c
+
+$ vi mybinary.c
+#=========================#
+#include <stdio.h>
+
+int main(){
+
+    printf("Hello World");
+    return 0;
+}
+#=========================#
+# compiling
+$ gcc mybinary.c
+
+$ ls a.out
+$ ./a.out
+
+# escape
+$ touch my\ binary.c
+
+#==========================================#
+# 02. Caminhos absolutos, relativos e o ls #
+#==========================================#
+
+# absolute path
+$ less /home/michael/myfile.txt
+
+# relative path
+$ cd ~
+$ less ./myfile.txt
+
+# . current directory
+# .. parent directory
+# ~ user home directory
+
+# builtin
+$ type cd
+
+# go to user home
+$ cd
+
+# go to last directory
+$ cd -
+
+# -a is all variants of ls
+$ type -a ls
+
+# without alias
+$ /bin/ls
+
+$ /bin/ls --color=auto ~/
+# Blue is directory
+# White is file
+# Green is executable
+# Red is compress file
+# Light Blue is a link
+
+$ /bin/ls -F
+# * is executable
+# / ending name is directory
+# @ ending name is a link
+
+# just mark directories
+$ /bin/ls -p
+
+# all files with hidden files
+$ ls -a
+$ ls --all
+
+# it orders from Z to A
+$ ls -r
+$ ls --reverse
+
+# it sorts by file size
+$ ls --sort=size
+
+# many informations of files and directories
+$ ls -l
+$ ls --format=long
+
+$ ls --format=long --reverse --sort=size
+
+# it sorts files by size
+$ ls -lS
+
+# it shows the current directory with children directories
+$ ls -R
+$ ls --recursive
+
+# -d shows information about the directory
+$ ls -ld ~/Documents
+
+# shows the inode for listed items
+ls -i
+
+#====================================#
+# 03. Criando e removendo diretórios #
+#====================================#
+
+# it makes a new directory
+$ mkdir myDir
+
+# it removes a directory
+$ rmdir myDir
+
+# it creates all directories recursively
+$ mkdir -p myDir/2021/files
+
+# it fails because directory isn't empty
+$ rmdir myDir
+
+# it removes all directories recursively from "files" to "myDir"
+$ rmdir -p myDir/2021/files/ 
+
+# globbing
+$ mkdir -p myDir/202{0,1}/files
+
+#===================================#
+# 04. Criação e remoção de arquivos #
+#===================================#
+
+# touch creates a files if it not exists
+$ touch hello-world.txt
+
+# touch changes modification time
+$ touch already-exist.txt
+
+# -a     change only the access time
+# -m     change only the modification time
+# -c     do not create any files
+
+# it copies from some file to another file
+$ cp first.txt second.txt
+
+$ rm second.txt
+
+$ touch myDir/2020/files/first.txt
+$ echo "The first one" > myDir/2021/files/first.txt
+$ cp myDir/2020/files/first.txt  myDir/2021/files/first.txt
+
+# second argument just has the filepath, then cp uses the filename from the first argument
+$ cp myDir/2020/files/first.txt  myDir/2021/files
+
+# it asks if you want override sencod file
+$ cp -i first.txt second.txt
+
+# it copies more than one file to selected diretory
+$ cp first.txt second.txt myDir/2021/files
+
+# it copies just updated files
+$ cp -u *.txt myDir/2021/files
+
+# it copies and makes backups from original files if are duplicate
+$ cp -b *.txt myDir/2021/files
+
+# backup has tilde in the end
+# first.txt~
+
+$ mkdir 2020
+$ touch 2020/first.txt
+$ touch 2021/second.txt
+
+# it copies everthing inside 2020 directory into 2021
+$ cp -r 2020 2021
+
+# waring
+# it copies 2020 into 2021 if ends with /
+$ cp -r 2020 2021/
+
+# it copies 2020 into 2021 because 2021 already exists
+$ cp -r 2020 2021
+
+# rename file or directory
+$ mv a.out myapp
+# move file to another directory
+$ mv myapp 2020/myapp
+
+# remove directory recursively
+# - r recursive
+# - f don't ask questions
+$ rm -rf 2020
+
+# remove directory recursively
+# - r recursive
+# - i ask questions if you want remove a file
+$ rm -ri 2020
+
+

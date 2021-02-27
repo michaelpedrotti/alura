@@ -1,0 +1,115 @@
+#==============================#
+# 01. Obtendo ajuda com o help #
+#==============================#
+
+# bash - bourne again shell ( Bourne Shell )
+
+# echo is a shell builtin
+$ type echo
+
+# help is used for builtin pages
+$ help type
+
+# man isn't find builtin pages
+$ man type
+
+# type returns if a command is a builtin
+$ type pwd
+
+# it returns if it is a builtin
+$ type -a ls
+
+$ man ls
+
+#===============================================#
+# 02. Utilizando o comando man para obter ajuda #
+#===============================================#
+
+# navegate on file
+$ less 
+
+# man use less to navegate on manual pages
+
+# -k as keywords
+
+# retorna uma lista de comandos printf
+$ man -k printf
+
+
+# manual da tabela ascii
+$ man -k ascii
+
+# it is equal as man -k 
+$ apropos ascii
+
+whereis crontab
+
+$ manpath
+/usr/local/man:/usr/local/share/man:/usr/share/man
+
+# if var is empty, man checks config file
+echo $MANPATH
+
+less /etc/manpath.config
+
+# it transforms "man" manual into another formats
+$ groff
+
+#===================================#
+# 03. Navegando nos manuais do info #
+#===================================#
+
+# navegate between help pages
+$ info
+
+$ info chmod
+$ info echo
+
+# it transforms "info" manual into another formats
+$ info text
+
+# info use emacs to navegate on manual pages
+
+#==========================#
+# 04. Conhecendo os HOWTOs #
+#==========================#
+ 
+$ ls /usr/share/doc
+$ less /usr/share/doc/zip/WHATSNEW
+$ less /usr/share/doc/zip/TODO
+
+# it returns many docs in different formats
+$ apt-cache search howto
+$ sudo apt-get install doc-linux-fr-text
+$ ls /usr/share/doc/HOWTO/fr-txt
+
+# The Linux Documentation Project
+# https://tldp.org
+
+#=======================================#
+# 05. Localizando arquivos com o locate #
+#=======================================#
+
+# it creates a empty new file
+$ touch myfile.txt
+
+# it uses indexes
+$ locate ~/*.txt
+
+# file of indexes
+$ ls -lha /var/lib/mlocate/mlocate.db
+
+# it updates all indexes in locate file
+$ sudo updatedb
+
+# it doesn't shows removed files
+$ locate -e myfile.txt
+
+# is executes updatedb on crontab
+$ ls /etc/cron.daily/mlocate
+
+# locate uses glob
+$ locate "/*log"
+
+
+
