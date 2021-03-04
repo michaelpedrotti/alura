@@ -1,0 +1,147 @@
+# 3.1 Archiving Files on the Command Line
+# https://learning.lpi.org/en/learning-materials/010-160/
+# https://learning.lpi.org/en/learning-materials/010-160/3/3.1/
+
+#===================#
+# 01. O comando tar #
+#===================#
+# archives = a file creates with others files
+
+# TAR = Tape ARchive
+# -c create
+# -f filename
+
+$ tar -cf file.tar *.txt
+dd
+# -t list files inside a tar file
+$ tar -tf file.tar
+
+# -x extract
+$ tar -xf file.tar
+
+# -v verbose
+$ tar -xvf file.tar
+
+# it copies with path myDir
+$ tar -cvf file.tar myDir/*
+
+# * ignores hidden files or directories
+
+# -v shows owner, groups and file permissions
+$ tar -tvf file.tar
+
+# -u creates a backup from old version file
+$ tar -uvf file.tar *.txt
+
+# -z compress with zip
+$ tar -czf file.tar.gz *.txt
+
+# -j compress with bzip
+$ tar -cjf file.tar.bz2 *.txt
+
+#=================================================#
+# 02. Compressão de arquivos com o gzip e o bzip2 #
+#=================================================#
+
+# it creates file.tar.gz and removes file.tar
+$ gzip file.tar
+
+# it extracts files from file.tar.gz and removes it
+$ gunzip file.tar.gz
+
+# equal gunzip
+$ gzip -d file.tar.gz
+
+# list files and compression from tar.gz
+$ gzip -l file.tar.gz
+
+# compress mode
+# 6 is default
+$ gzip -6 file.tar
+
+# 9 is maximum
+$ gzip -9 file.tar
+
+# 1 is minimum
+$ gzip -1 file.tar
+
+# it outputs the stream of compress file
+$ gzip -c file.tar
+
+# it compresses and don't remove the original file
+$ gzip -c file.tar > file.tar.gz
+
+# it creates file.tar.bz2 and removes file.tar
+$ bzip2 file.tar
+
+#==================================#
+# 03. Busca de arquivos com o find #
+#==================================#
+
+# can use glob
+$ find -name "*.txt" 
+
+# it finds only directories. "f" eq file, "l" eq link e "d" eq directory 
+$ find type d -name "*user*"
+
+# it finds by user. the first argument is the path
+$ find /home/michael -user michael
+
+# it finds files oversize 5Mb
+find /home/michael -size +5000k
+
+# it finds files were modified 7 days ago
+$ find /home/michael -mtime -7
+
+# it finds files were accessed 5 days ago
+$ find /home/michael -atime -5
+
+# it finds files were changed 3 days ago
+$ find /home/michael -ctime -3
+
+# it finds files by inode
+$ find -inum 455950
+
+# if finds both expressions with AND ( -a eq AND [ default ] )
+$ find -name "*2021-02-01"  -name "*.log"
+
+# if finds both expressions with OR
+$ find -name "*.txt" -o  -name "*.xml"
+
+# if finds files end with txt or xml and start with config in the name
+$ find \(-name "*.txt" -o  -name "*.xml"\) -a -name "config*"
+
+# it finds files without 2020 in the name
+$ find ! -name "*2020*"
+
+# it finds files ignoring case sensetive
+$ find -iname "*Default*"
+
+# it finds files and executes to each file some command
+$ find -name "*2020*" -name "*.log" -exec ls -l "{}" \;
+
+$ find -name "*2020*" -name "*.log" -exec rm -i "{}" \;
+
+#====================================================#
+# 04. Compactando e descompactando com o zip e unzip #
+#====================================================#
+
+# zip by default isn't recursively ( -r )
+$ zip -r file.zip *.txt
+
+# it lists files inside the zip file
+$ unzip -l file.zip
+
+# it extracts files inside the zip file
+$ unzip file.zip
+
+# it extracts selected files inside the zip file
+$ unzip file.zip first.txt second.txt
+
+# it compresses all html files found by "find"
+# -@ each file from the previous command
+$ find -name "*.html" | zip -@ file.zip
+
+
+
+

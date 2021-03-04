@@ -1,0 +1,169 @@
+# Topic 3: The Power of the Command Line
+# 3.2 Searching and Extracting Data from Files
+# https://learning.lpi.org/en/learning-materials/010-160/3/3.2/
+
+#===========================================#
+# 01. Como obter informações sobre arquivos #
+#===========================================#
+
+# count word
+# it returns number of lines, number of words and size
+$ wc first.txt
+
+# it shows the largest line in file
+$ wc -L first.txt
+
+# it shows a file as a page
+# ENTER go to next line
+# SPACE go to next page
+# B to go back page
+# V to go to VIM editor
+$ more sencod.txt
+
+# END go to end of file
+# HOME go to begin of file
+# / find 
+# ? find prev
+# : go to line
+# CTRL + L rewrite the window
+$ less second.txt
+
+# it shows lines with their numbers
+$ cat -n first.txt
+
+$ cat first.txt second.txt > third.txt
+
+# it shows the beginning 10 lines of file
+$ head first.txt
+
+# it shows the beginning 20 lines of file
+$ head -n 20 second.txt
+
+# it shows the last 10 lines of file
+$ tail first.txt
+
+# it shows from line 30 to the end of file
+$ tail -n +30 sencond.txt
+
+# it shows just new lines added in the current moment
+# -f eq follow
+$ tail -f file.log
+
+#=============================#
+# 02. Redirecionamento de I/O #
+#=============================#
+# standard input = stdin
+# standard output = stdout
+# standard error output = stderr
+
+# it reads some information from key-board to stdout
+$ read
+
+# it reads some information from key-board to a enviroment variable
+$ read AGE
+
+$ echo $AGE
+
+# it redirects stdout to override or create a file
+$ ls -lha > ~/output.txt
+
+# it redirects stdout to a file to append a file
+$ ls -lha >> ~/output.txt
+
+# it redirects stderr to override or create a file
+$ cd /no-exists 2> ~/error.log
+
+# it sends stderr to stdout
+$ cd /no-exists 2>&1  > ~/debug.log
+
+# it waits to you type the names of files to be added
+$ zip -@ file.zip
+
+# it sends the list of files inside txt file into file.zip
+$ zip -@ file.zip < ~/list-of-files.txt
+
+$ zip -@ file.zip < ~/list-of-files.txt > ~/debug.log
+
+#===============================#
+# 03. Pipes na linha de comando #
+#===============================#
+# it finds and addes into zip file and count word
+$ find -name "*2021*" -name "*.log" | zip -@ file.zip | wc
+
+$ ls -lha | less
+
+$ apt-cache search mysql | less
+
+#=======================================#
+# 04. Processamento de textos com o cut #
+#=======================================#
+
+$ echo "0001 guilherme 100,00" >  ~/file.txt
+$ echo "0002 paulo      50,15" >> ~/file.txt
+$ echo "0003 ana       110,24" >> ~/file.txt
+$ echo "0004 carlos    300,29" >> ~/file.txt
+$ echo "0005 guilherme 110,20" >> ~/file.txt
+$ echo "7658 lucia     325,46" >> ~/file.txt
+
+# it cutes by column ( -c )
+$ cut -c 1-4 ~/file.txt
+
+$ cut -c 6-14 ~/file.txt
+
+# it uses stdin as default
+$ cat file.txt | cut -c 6-14
+
+$ cat file.txt | cut -c 1-4,16-21 --output-delimiter=" => "
+
+# it cutes by field with delimiter ":"
+$ cut -f 1 -d : /etc/passwd 
+
+# it cutes fields one and five with delimiter ":"
+$ cut -f 1,5 -d : /etc/passwd 
+
+$ cut -c 1-4 ~/codes.txt
+$ cut -c 16-21 ~/prices.txt
+
+$ paste codes.txt prices.txt
+
+#====================#
+# 05. O comando sort #
+#====================#
+
+$ cut -f 1 -d : /etc/passwd | sort
+
+$ cut -c 1-4,6-14,16-21 --output-delimiter=";" file.txt | sort -k 3 -t ";"
+
+# it removes same price
+# -u equal unique
+$ cut -c 16-21 file.txt | sort -u
+
+#===================================#
+# 06. Expressões regulares e o grep #
+#===================================#
+
+# -n eq number line
+$ grep -n "SQL" blog.txt
+
+# -c eq count words by line 
+$ grep -c "SQL" blog.txt
+# if same word is in the line still count one
+
+
+# -i eq disable case sensetive
+$ grep -c -i "SQL" blog.txt
+
+# . any char
+# ? one or empty
+# * one or many
+# [] collection
+
+# it finds line without SQL
+$ grep -v "SQL" blog.txt
+
+# it finds recursively SQL inside files in current directory
+$ grep -r "SQL"
+
+# alias
+$ rgrep "SQL"
+

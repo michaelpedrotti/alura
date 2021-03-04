@@ -1,0 +1,66 @@
+# Topic 4: The Linux Operating System > 4.1 Choosing an Operating System
+
+# https://learning.lpi.org/en/learning-materials/010-160/4/
+
+#===================#
+# 01. O Processador #
+#===================#
+
+# lts = long term support
+# cpu = central process unit
+# ic = integrated circuit
+
+# Multi-core processor = IC with two or more processing units
+
+# x86 = is instructions set
+# BIOS is an acronym for Basic Input/Output System as a firmware
+
+#===================#
+# 02. A memória RAM #
+#===================#
+# RAM = random-access memory
+# Hz = speed of data load
+
+# A memória RAM possui acesso aleatório
+#==============================#
+# 03. Disco rígido e partições #
+#==============================#
+# HD = Hard Disk ( magnetic )
+# RPM = Revolutions per minute is the number of turns in one minute. 
+# SSD = Flash memory is an electronic non-volatile computer memory
+
+# IDE
+# SATA
+
+# list block devices
+$ lsblk 
+
+#NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+#sda      8:0    0 931,5G  0 disk 
+#├─sda1   8:1    0   300M  0 part /boot/efi
+#├─sda2   8:2    0 927,5G  0 part /
+#└─sda3   8:3    0   3,7G  0 part [SWAP]
+
+# it creates a new partition
+$ sudo fdisk /dev/dsb
+
+# build a Linux filesystem ( make filesystem )
+$ sudo mkfs -t ext4 /dev/sdb1
+
+# mounts a device on a directory
+$ sudo mount /dev/sdb1 /mnt/mydev
+
+#=========================#
+# 04. Mais sobre hardware #
+#=========================#
+
+# disc devices are mounted on /mnt
+# cd-rom, blu-ray is monted on /media
+
+# Power Supply Unit
+
+# Leap Motion
+
+# VGA, DVI, HDMI
+
+

@@ -1,0 +1,149 @@
+# 4.3 Where Data is Stored
+# 
+# https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
+# FHS: Filesystem Hierarchy Standard
+#
+# https://learning.lpi.org/en/learning-materials/010-160/4/4.3/
+#
+#=====================================#
+# 01. O Filesystem Hierarchy Standard #
+#=====================================#
+#
+# /           Root
+# /boot       Boot loader Config ( kernel, grub )
+# /dev        Devices
+# /dev/null   Null Output Device
+# /dev/random Random Input Device
+# /bin        System command binaries for single-user mode
+# /sbin       System system binaries for root on boot
+# /usr        Secondary hierarchy for read-only user data; Should be shareable and read-only.
+# /usr/bin
+# /usr/sbin  
+# /lib        Libraries fro /bin and /sbin
+# /etc        Configuration Files
+#
+#=======================================#
+# 02. Os diretórios /etc, /media e /mnt # 
+#=======================================#
+
+$ cat /etc/fstab
+
+# script executed on system boot
+$ ls /etc/init.d
+
+# changes the password from logged user
+$ passwd
+
+$ sudo cat /etc/shadow
+
+#===========================================================#
+# 03. Entendendo os diretórios /lib e subdiretórios de /usr #
+#===========================================================#
+
+# source code to build like kernel
+$ ls /usr/src
+
+# for all users. Same directories as bin, sbin, src, lib
+$ ls /usr/local
+
+# custom binaries
+$ ls /usr/local/bin
+
+#======================================#
+# 04. Mais diretórios definidos no FHS #
+#======================================#
+
+$ ls /proc
+# virtual files with data from system ( procfs )
+$ less /proc/cpuinfo
+$ less /proc/devices
+$ cat /proc/loadavg
+
+# it loades informations from loadavg for the past 1, 5, and 15 minutes
+$ uptime
+
+# show memory, swap and cache. -h is representation human for size
+$ free -h
+
+# virtual files with data from device ( sysfs )
+$ ls /sys/fs/ext4/sda2
+$ cat /sys/fs/ext4/sda2/session_write_kbytes
+
+$ ls /sys/power
+$ cat /sys/power/disk
+
+#====================================#
+# 05. Sistema de mensagens e logging #
+#====================================#
+
+# it's used to examine or control the kernel ring buffer.
+$ dmesg
+
+# it sends stdout to less
+$ dmesg | less
+
+# https://en.wikipedia.org/wiki/Syslog
+# syslog is a standard for message logging
+$ man syslog
+
+# syslog service ( daemon )
+$ syslogd
+
+# variable files
+$ ls /var
+
+$ cat /var/log/dpkg.log.1
+
+# temporary files
+$ ls /tmp
+
+# reliable and extended syslogd
+$ ls /usr/sbin/rsyslogd
+
+# syslog writes log and dmesg reads log
+
+#===============#
+# 06. Processos #
+#===============#
+
+# shows proccess are runing in this shell
+$ ps
+
+# To see every process on the system using standard. UNIX-style
+$ ps -e
+
+# -f adds additional columns like user 
+$ ps -ef
+
+# PID = Proccess ID
+# PPID = Parent Proccess ID
+# it sends signal TERM
+$ kill 2081
+# it can send direfente signals like HUP, INT, KILL, STOP, CONT
+
+# kills a proccess immediately without send signal ( 1-9 )
+$ kill -9 2147
+
+# lists a selected proccess
+$ ps -l 2155
+
+#  To see every process on the system using BSD. BSD-style (without "-")
+$ ps ax 
+# equal a ps -ef
+
+# shows a list os proccess with its status
+$ top
+# status: running, sleeping, stopped, zombie
+# SHIFT + ? = help
+# q = quit
+
+$ vim first.txt
+# CTRL+Z inside vim stops proccess
+
+# it means foreign ground, turns last process stopped to running
+$ fg 
+
+# zombie is a parent process, it creates children processes and it is terminated and children are running
+
+
+

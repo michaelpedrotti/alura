@@ -1,0 +1,105 @@
+#Topic 3: The Power of the Command Line > 3.3 Turning Commands into a Script
+
+#==================================#
+# 01. Criação de um script simples #
+#==================================#
+
+# call a bash children 
+$ bash myscript
+
+$ sh mycript
+
+# shebangs eq #!
+$ echo '#!/bin/bash' > myscript
+
+# executes script with verbose
+$ echo '#!/bin/bash -v' > myscript 
+
+# `pwd` get stdout into some enviroment variable
+$ echo "the current directory is `pwd`"
+
+$ CURRENT_PATH=`pwd`
+# alias
+$ CURRENT_PATH=$(pwd)
+
+$ echo $CURRENT_PATH
+
+# with escape
+$ echo ${CURRENT_PATH}
+
+$ echo 'CURRENT_PATH=$(pwd)' >> myscript
+$ echo 'echo $CURRENT_PATH' >> myscript
+
+#============================#
+# 02. Variáveis e argumentos #
+#============================#
+
+# source uses the current bash
+$ source myscript
+
+# current bash
+$ ./myscript
+
+# inside myscript, $# returns count of arguments
+$ echo $#
+# escape ${#}
+
+# inside myscript, $# returns all arguments
+$ echo $*
+# escape ${*}
+
+# inside myscript, 0 means no error on execute
+exit 0
+
+# it returns the last exit code from the last script executed
+$ echo $?
+
+# "" will be interpreted all special chars inside it
+
+# '' will be print all chars as literal
+
+#===========#
+# 03. Loops #
+#===========#
+
+# Default Collection is separated by space
+for year in 2016 2017
+do
+    echo "current year: ${year}"
+done
+
+# it stops myscript if any error happen
+$ echo '#!/bin/bash -x' > myscript 
+
+#=======================#
+# 04. Editores de texto #
+#=======================#
+$ vi file.txt
+# colored
+$ vim file.txt
+
+# a = append
+# ESC = go back to preview mode
+# x = it removes the next char where cursor stays
+# /something = finds a word as something
+# :25 = go to line number 25
+# :q = quite
+# :q! = quite and discarte changes
+# :w = write
+# :x = write e exit
+
+$ pico file.txt
+# CTRL + o = save
+# CTRL + x = exit
+# CTRL + k = cut
+# CTRL + u = paste
+
+# picos is alias for nano
+
+
+
+
+
+
+
+

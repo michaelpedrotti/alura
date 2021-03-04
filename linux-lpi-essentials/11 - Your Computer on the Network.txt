@@ -1,0 +1,100 @@
+# 4.4 Your Computer on the Network
+#
+# https://learning.lpi.org/en/learning-materials/010-160/4/4.4/
+#
+#=============================#
+# 01. Endereço IP, ping e dig #
+#=============================#
+
+# IPv4 uses dotted-decimal notation ( 0-255 = 256 )
+# DNS Server = Domain Name System Server 
+
+# it is DNS lookup utility
+$ dig www.alura.com.br
+
+# IPv4
+$ ping 64.233.190.121
+
+# IPv6
+$ ping6  2606:4700:3032::6815:5ecf
+
+$ dig www.naver.com.kr
+# all ips from naver.com.kr will not response to ping command
+# it means the server could be on, but doesn't respond ping command
+
+#========================#
+# 02. Introdução ao IPv6 #
+#========================#
+
+# 256*256*256*256 = 4.294.967.296 (2x^32) per network with IPv4
+
+# IPv6 = 2x^128, hexadecimal base
+
+$ ifconfig 
+
+#================================#
+# 03. Ifconfig, redes e internet #
+#================================#
+
+# DHCP - Dynamic Host Configuration Protocol
+
+# checks alias for domain, each one with ip
+$ host www.alura.com.br
+
+# Domain alias for IPs
+$ cat /etc/hosts
+
+# ipv4 192.168.1.112
+# netmask 255.255.255.0 ( 192.168.1.* )
+
+# shows ips and masks for each network interface
+$ route
+
+$ cat /etc/resolv.conf
+# nameserver 127.0.1.1
+
+# configures /etc/resolv.conf
+$ resolvconf
+
+#================#
+# 04. DNS Lookup #
+#================#
+# network interface
+#
+# lo = Local Loopback ( local network 127.0.0.1 )
+
+$ ifconfig lo
+$ ifconfig eth0
+
+#==================#
+# 05. O comando IP #
+#==================#
+
+# shows network config like route and ipconfig
+$ ip route show
+
+# shows network interfaces with each ip and mask
+$ ip addr show
+
+#=======================#
+# 06. O comando netstat #
+#=======================#
+
+$ netstat
+
+# -l means listening
+# -t means TCP
+# -n means port numbers
+$ netstat -ltn
+
+# -p means proccess ( PID or Name ) using a port ( root is required )
+$ sudo netstat -ltnp
+
+# -s means statictics by protocol ( UDP, TCP )
+$ netstat -s
+
+sudo netstat -penult
+
+
+
+
