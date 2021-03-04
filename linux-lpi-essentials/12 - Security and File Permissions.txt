@@ -1,35 +1,218 @@
-
+# Topic 5: Security and File Permissions
+#
+# https://learning.lpi.org/en/learning-materials/010-160/5/
+#
 #=========================#
 # 01. Criação de usuários #
 #=========================#
+# root has uid eq 0
+
+# list users, groups, passwords
+$ sudo cat /etc/shadow
+
+# returns user uid
+$ id 
+
+# argument is username
+$ id root
+
+# creates a new system user
+$ sudo useradd fulano
+
+# changes/creates a password for user fulano
+$ sudo passwd fulano
+
+# login as fulano in terminal without login process
+$ su fulano
+
+# login as fulano in terminal with same login process
+$ sudo - fulano
+
+# the boht commands aren't a real login
+
+# creates directory home for current user
+$ sudo useradd -m beltrano
+
+# -k creates a home directory with skeleton
+$ sudo useradd -k /etc/skel/examples.desktop beltrano
+
+# removes user
+$ sudo userdel fulano
+
+# removes user and home directory (-r)
+$ sudo userdel -r beltrano
+
+# modifies /etc/passwd
+$ sudo vipw
+
+# modifies /etc/shadow
+$ sudo vipw -s
 
 #================================#
 # 02. Informações sobre usuários #
 #================================#
 
+# Prints information about users who are currently logged in
+$ who
+
+# return startup date
+$ who -b
+
+# Show who is logged on and what they are doing.
+$ w
+
+# linux like ubuntu has user root without a password
+$ sudo passwd root
+
+# or you can login as root without a password
+$ sudo -i
+
+$ sudo cat /etc/sudoers
+
+# shows when current user had login and logout
+$ last
+
+$ last fulano
+
 #======================================#
 # 03. O sistema de permissões do Linux #
 #======================================#
 
+$ ls -lha first.txt 
+# -rw-r--r-- 1 michael michael 12 mar  4 09:35 first.txt
+
+# Users
+# u = owner
+# o = others
+
+# Permissions
+# r = read (4)
+# w = write (2)
+# x = execute (1)
+
+# -(u = rwx)(g = rwx)(o = rwx) owner group
+
+# adds permission write to owner
+$ chmod +w file.txt
+
+# adds permission write to everyone who is not the owner
+$ chmod o+w file.txt
+
+# removes permissions read and write to everyone who is not the owner
+$ chmod o-rw file.txt
+
+# applies write permission on directory and files inside it
+$ chmod -R o+w ~/Documents
+
+# changes owner of file first.txt to beltrano
+$ sudo chown beltrano first.txt
+
+$ sudo chown -R beltrano ~/Documents
+
 #===========================#
 # 04. Mais sobre permissões #
 #===========================#
+# GID = Group ID
+
+# removes write permission from group
+$ chmod g-w first.txt
+
+$ chmod u=rw,g=r,o=w second.txt
+
+# copies all permissions from
+$ chmod --reference=second.txt third.txt
+
+# Permissions
+# r = read (4)
+# w = write (2)
+# x = execute (1)
+
+# 4 + 2 = 6 ( read + write )
+# 4 + 2 + 1 = 7 ( read + write + execute )
+# 2 + 1 = 3 ( write + execute )
+# 4 + 1 = 5 ( read + execute )
+
+# changes only group who file belongs
+$ sudo chown :beltrano first.txt 
+
+# changes only owner who file belongs
+$ sudo chown beltrano: first.txt 
 
 #=============================#
 # 05. Criação de novos grupos #
 #=============================#
 
+$ ls -d -lha /tmp
+# drwxrwxrwt 16 root root 16K mar  4 10:56 /tmp
+# 
+# starts with "d", it means is a directory
+# starts with "-", it means is a file
+# ends with "t", it means as "sticky bit" ( another users can't remove it )
+
+$ mdir ~/myDirectory
+
+$ chown +t ~/myDirectory
+
+# returns UID from user fulano
+$ id -u fulano
+
+# returns GID from group fulano
+$ id -g fulano
+
+# returns the name from group fulano
+$ id -gn fulano
+
+# returns GID from all groups of fulano
+$ id -G fulano
+
+# returns names from all groups of fulano
+$ id -Gn fulano
+
+# same result as prev comand
+$ groups fulano
+
+# list system groups
+$ cat /etc/group
+
+# creates a new system group
+$ sudo groupadd mygroup
+
+# adds fulano into mygroup
+# -a eq append
+# -G eq group
+$ sudo usermod -a -G mygroup fulano 
+
+# user needs to logout and login after add group
+
+$ sudo grupodel mygroup
+
+$ sudo userdel fulano
+
+# groupmod
+
 #============================================#
 # 06. Bit especial para execução de arquivos #
 #============================================#
+
+$ ls -l /usr/bin/passwd 
+# -rwsr-xr-x 1 root root 59640 mar 22  2019 /usr/bin/passwd
+# "s" executes a binary as root ( with permissions )
 
 #==================================#
 # 07. Links simbólicos e hardlinks #
 #==================================#
 
+# creates a hardlink
+# $1 = file
+# $2 = link
+$ sudo ln ~/myscript /user/local/bin/myscript
+
+# -s simbolic
+
 #=============================#
 # 08. Hora de marcar a prova! #
 #=============================#
 
-
+# linux essentials exam mock
+# linux essentials exam questions
 
