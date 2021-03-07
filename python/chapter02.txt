@@ -1,0 +1,94 @@
+# Python 2.7.17 + GCC 7.5.0
+python -V
+
+# Python 3.6.9 + GCC 8.4.0   
+python3 -V
+
+>>> "hello world".find("world")
+# 6
+>>> "hello world".find("again")
+# -1
+# not found
+
+>>> for letter in "Hello World":
+  print(letter)
+
+>>> "banana".capitalize()
+# 'Banana'
+>>> "banana".endswith("na")
+True
+
+>>> "banana".upper()
+'BANANA'
+
+>>> " abc ".strip()
+'abc'
+
+>>> array = [0, 1, 2, 3, 4]
+>>> min(array)
+0
+>>> max(array)
+4
+>>> len(array)
+5
+>>> array.append(5)
+>>> array.pop()
+5
+
+>>> if "Pera" in ['Banana', 'Maca', 'Pera', 'Uva', 'Melancia', 'Jamelão']:
+    print ('Sim, temos a fruta.')
+else:
+    print ('Não temos a fruta.')
+
+>>> [ 0, 0, 0, 1, 2, 3, 4].count(0)
+3
+# number of hits for 0
+
+>>> min("banana")
+'a'
+
+>>> len("banana")
+6
+
+>>> max("banana")
+'n'
+
+# contant
+>>> weekdays = ("Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur", "Sun")
+
+>>> type(weekdays)
+<class 'tuple'>
+
+>>> words = []
+>>> words.append("banana")
+>>> words.append("abacaxi")
+>>> tuple = tuple(words)
+>>> tuple
+('banana', 'abacaxi')
+>>> words2 = list(tuple)
+>>> words2
+['banana', 'abacaxi']
+
+>>> ["_" for char in "Michael"]
+['_', '_', '_', '_', '_', '_', '_']
+
+>>> [char.upper() for char in "Michael"]
+['M', 'I', 'C', 'H', 'A', 'E', 'L']
+
+>>> [n*n for n in [1,3,4,5,7,8]]
+[1, 9, 16, 25, 49, 64]
+
+>>> stream = open("/home/michael/fruits.txt", "r")
+>>> stream.write("banana\n")
+>>> stream.write("melancia\n")
+>>> stream.close()
+
+>>> stream = open("/home/michael/fruits.txt", "r")
+>>> stream.read()
+# read all file
+
+>>> for line in stream.read():
+...     print(line.strip())
+
+# functions use snake_case as model
+
