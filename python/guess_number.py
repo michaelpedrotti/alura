@@ -1,5 +1,5 @@
 import random
-import command as output
+import draw as output
 
 
 def play():

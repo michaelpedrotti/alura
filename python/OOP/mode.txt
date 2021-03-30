@@ -1,0 +1,46 @@
+class User_Account:
+    # Every method the first argument is a instance of object
+    def __init__(self, username, email, name):
+        # private property ( starts with __ is private )
+        self.__username = username
+        # protected
+        self._email = email
+        # public
+        self.name = name
+
+    # method creates representation in string of class, like toString
+    def __str__(self):
+        return f"name: {self.__username}, year: {self._email}"
+
+# mangling is used for "private"
+# start with __
+
+# name mangling is a way to access private attribute
+user = User_Account("michael", "michael@domain.com", 'Michael Pedrotti')
+print(user._User_Account__username)
+
+class Caelum:
+    pass
+
+class Alura
+    pass
+
+class Junior(Alura):
+    pass
+
+class Pleno(Alura, Caelum)
+    pass
+
+# mixin class is a class with many extends with staff behavior class
+
+# from datetime import date
+# print(date.today())
+# 2018-03-01
+# print(date.strftime("%d/%m/%Y"))
+# return 01/03/2018
+# https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+
+# from datetime import datetime
+# print(datetime.now())
+# print(datetime.strftime('%d/%m/%Y %H:%M'))
+# print(datetime.strptime("01/03/2018 12:30", "%d/%m/%Y %H:%M"))

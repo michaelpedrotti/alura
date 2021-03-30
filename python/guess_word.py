@@ -1,74 +1,30 @@
 import random
-import command as output
+import draw
 
 
-def draw_body(errors):
-    """
-    shows human body based on error numbers
-    :param errors:
-    :return:
-    """
-
-    # each line has 9 chars, when join command is done there are 10 chars per line
-    lines = [
-        " +---+-  ",
-        " |   |   ",
-        " |  \o/  ",
-        " |   |   ",
-        " |  / \  ",
-        " |       ",
-        "-+-------",
-    ]
-
-    # put all items into a string with \n every end of line
-    string = "\n".join(lines)
-
-    # replaces human body char to empty
-    indexes = [
-        24, 25, 26,
-        35,
-        44, 46
-    ]
-
-    # needs to start from the left foot to right arm
-    indexes.reverse()
-    # removes total errors from body parts
-    end = abs(errors - len(indexes))
-    # intersect
-    indexes = indexes[0:end]
-
-    for index in indexes:
-
-        # string[index] = "*"
-        # https://pythonexamples.org/python-string-replace-character-at-specific-position/
-        string = string[:index] + ' ' + string[index+1:]
-
-    print(string)
-
-
-def display(secret, underscore, char):
+def display(secret, shadow, char):
 
     """
     Replaces underscore by right char many type it needs
+    :param char:
     :param secret: BANANA
-    :param underscore: ______
+    :param shadow: ______
     :return: underscore
     """
     index = 0
     end = secret.count(char)
 
-    print("end " + str(end))
     for number in range(0, end):
         index = secret.find(char, index)
-        underscore[index] = char
+        shadow[index] = char
         index += 1
-    return underscore
+    return shadow
 
 
 def secret_word():
     """
     it chooses a word from a list in file
-    :return string
+    :returns string, string
     """
 
     words = []
@@ -78,40 +34,47 @@ def secret_word():
     stream.close()
 
     index = random.randrange(0, len(words))
-    return words[index]
+    secret = words[index]
+    # ['?', '?', '?', '?', '?', '?']
+    shadow = ["?" for char in secret]
+
+    return secret, shadow
 
 
 def play():
 
-    # print(display("BANANA", ["?", "?", "?", "?", "?", "?"], 'A'))
-    # draw(4)
-    # display("banana", "______", 'a')
-    # output.spell_letters(["B", "?", "N", "?", "N", "?"])
-    # exit(0)
+    draw.header(title="Guess The Word")
 
-    output.header(title="Guess The Word")
-    # banana
-    secret = secret_word()
-    # ['?', '?', '?', '?', '?', '?']
-    underscore = ["?" for char in secret]
+    secret, shadow = secret_word()
 
-    won = False
     # max errors are 6
     errors = 0
+    hits = 0
 
-    while not won and errors < 6:
+    while errors < 6:
         char = input("Letter:").strip().upper()
 
-        output.clear()
-        # char exits in list
+        draw.clear()
         if char in secret:
-            underscore = display(secret, underscore, char)
+            shadow = display(secret, shadow, char)
+            hits += 1
         else:
             errors += 1
-        draw_body(errors)
-        output.spell_letters(underscore)
 
-    if won:
+        draw.body(errors)
+        draw.yaml({
+            "Hits": hits,
+            "Errors": errors,
+            # "Word": secret,
+            # "Shadow": shadow
+        })
+        if '?' in shadow:
+            draw.word(shadow)
+        else:
+            draw.word(secret)
+            break
+
+    if errors < 6:
         print("Win")
     else:
         print("Lose")
