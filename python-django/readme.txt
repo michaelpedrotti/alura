@@ -121,10 +121,11 @@ $ vcode ./project/settings.py
 #   os.path.join(BASE_DIR, 'myapp/static')
 # ]
 
-$ mkdir ./project/static
+$ mkdir ./myapp/static
 
-$ tar xzfv statics.tar.gz ./static
+$ tar xzfv statics.tar.gz -C ./myapp/static
 
+# generates static/ diretory on BASE_DIR
 $ ./venv/bin/python ./manage.py collectstatic
 # 
 # 167 static files copied to '/projects/alura/python-django/static'
@@ -132,3 +133,78 @@ $ ./venv/bin/python ./manage.py collectstatic
 $ vcode ./myapp/templates/index.html
 # {% load static %}
 # {% static 'img/core-img/favicon.ico' %}
+
+#====================#
+# Work with Postgres #
+#====================#
+
+$ docker pull postgres:10-alpine
+$ docker run -d --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:10-alpine
+
+# user: postgres
+# pass: postgres
+
+# django module for postgres
+# pip install psycopg2-binary
+# pip install psycopg2
+
+$ vi ./project/settings.py
+# DATABASES = {
+#     'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'alura',
+#        'HOST': 'localhost',
+#        'USER': 'postgres',
+#        'PASSWORD': 'postgres'
+#     }
+# }
+
+$ vi ./myapp/models.py
+# create a model called Receita
+
+# When you created a model you should create a migration of it, 
+# for further sync with database
+$ ./venv/bin/python ./manage.py makemigrations
+
+# Migrations for 'myapp':
+#   myapp/migrations/0001_initial.py
+#     - Create model Receita
+
+$ less ./myapp/migrations/0001_initial.py
+
+# it creates all models into database as tables
+$ ./venv/bin/python ./manage.py migrate
+
+#==============#
+# Django Admin #
+#==============#
+
+# import model Receitas into Django Admin
+vi ./myapp/admin.py
+
+# from django.contrib import admin
+# from .models import Receita
+# 
+# admin.site.register(Receita)
+
+#  set default user for admin
+$ ./venv/bin/python ./manage.py createsuperuser
+# user: admin
+# pass: admin
+
+# restart server
+$ ./venv/bin/python ./manage.py runserver
+
+# rote
+# http://127.0.0.1:8000/admin
+
+$ ./venv/bin/pip install pylint-django
+
+$ vi settings.json
+
+# {
+#     "python.pythonPath": "venv/bin/python",
+#     "python.linting.pylintArgs": [
+#         "--load-plugins=pylint_django"
+#     ]
+# }
