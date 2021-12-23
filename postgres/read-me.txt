@@ -1,0 +1,775 @@
+# https://www.postgresql.org/docs/12/
+
+# pull image
+$ docker pull postgres:12.9-alpine
+
+# create a container
+$ docker run -d \
+  --name postgres-12 \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=mydb \
+  -p 5432:5432 \
+  postgres:12.9-alpine
+
+# connect psql as pgadmin
+# $ docker exec -it postgres-12 psql -U pgadmin -d mydb
+
+# pgadmin
+
+# connect psql inside container
+$ docker exec -it postgres-12 psql -h 127.0.0.1 -U postgres
+
+# list databases
+postgres-# \list
+
+# same command
+postgres-# \l
+
+# create new database
+postgres-# CREATE DATABASE alura WITH 
+    OWNER=postgres 
+    ENCODING='UTF8' 
+    CONNECTION LIMIT=-1;
+
+# delete a database
+postgres-# DROP DATABASE alura;
+
+# connect to a database 
+postgres-# \c mydb
+
+#  list all tables
+mydb=# \dt
+
+# list all tables from public 
+mydb=# \dt public.*
+
+# return current datetime
+mydb=# SELECT now();
+#  2021-12-09 13:20:42.446603+00
+# (1 row)
+
+# OR
+mydb=# SELECT CURRENT_TIMESTAMP;
+
+# [ datatype ]
+#
+# integer, real, serial( auto-increment ), numeric
+#
+# varchar, char, text
+#
+# boolean
+#
+# date, timestamp
+
+# Create
+mydb=# CREATE TABLE users (
+    id SERIAL,
+    name VARCHAR(255),
+    username VARCHAR(50),
+    cpf CHAR(11),
+    age INTEGER,
+    budget NUMERIC(10, 2),
+    height REAL,
+    born DATE,  
+    enabled BOOLEAN,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+# Insert
+mydb=# INSERT INTO users (name, username, cpf, age, budget, height, born, enabled, created_at)
+    VALUES ('Fulano', 'fulano', '12345678910', 35, 99.90, 1.82, '1984-08-27', TRUE, '2020-02-08 12:34:45');
+
+# Insert returning inserted id
+mydb=# INSERT INTO users (id, name, username, cpf, age, budget, height, born, enabled, created_at)
+    VALUES (DEFAULT, 'Beltrano', 'beltrano', '01987654321', 36, 101.90, 1.86, '1982-08-27', FALSE, '2020-03-08 12:34:44') RETURNING id;
+
+# Update
+mydb=# UPDATE users SET enabled = TRUE WHERE id = 2;
+
+# Delete
+mydb=# DELETE FROM users WHERE id = 2;
+
+# Column alias
+mydb=# SELECT name as "full name" FROM users;
+
+# is null
+mydb=# SELECT cpf FROM users WHERE cpf IS NULL;
+
+# is not null
+mydb=# SELECT cpf FROM users WHERE cpf IS NOT NULL;
+
+# Not null and Unique
+mydb=# CREATE TABLE social_network (
+    id INTEGER NOT NULL UNIQUE,
+    name varchar(100) NOT NULL
+);
+
+mydb=# DROP TABLE social_network;
+
+# Primary Key
+mydb=# CREATE TABLE social_network (
+    id INTEGER PRIMARY KEY,
+    name varchar(100) NOT NULL
+);
+
+# Another away
+mydb=# CREATE TABLE social_network (
+    id SERIAL NOT NULL,
+    name varchar(100) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+# Primay key with custom name
+mydb=# CREATE TABLE social_network (
+    id SERIAL NOT NULL,
+    name varchar(100) NOT NULL,
+    CONSTRAINT pk_socialnetwork PRIMARY KEY (id)
+);
+
+INSERT INTO social_network VALUES(1, 'Twitter');
+INSERT INTO social_network VALUES(2, 'Instagram');
+
+# Decribe Table
+mydb=# \d+ public.social_network;
+
+# Primary Key
+mydb=# CREATE TABLE user_socialnetworks (
+    user_id INTEGER,
+    sn_id INTEGER,
+    CONSTRAINT pk_socialnetwork PRIMARY KEY(user_id, sn_id), 
+    CONSTRAINT fk_users_socialnetwork  
+        FOREIGN KEY (user_id)
+            REFERENCES users (id)
+                ON UPDATE NO ACTION
+                ON DELETE CASCADE,
+    CONSTRAINT fk_sn_socialnetwork  
+        FOREIGN KEY (sn_id)
+            REFERENCES social_network (id)
+                ON UPDATE NO ACTION
+                ON DELETE CASCADE 
+);
+
+
+INSERT INTO user_socialnetworks VALUES(1, 1);
+INSERT INTO user_socialnetworks VALUES(1, 2);
+
+# LEFT JOIN ( null at left table), RIGHT JOIN ( null at rigth table), FULL JOIN ( null at both ), CROSS JOIN () 
+
+SELECT 
+    a.name AS "user_name", 
+    c.name AS "social_newtork" 
+FROM users AS a
+JOIN user_socialnetworks AS b ON a.id = b.user_id
+JOIN social_network AS c ON c.id = b.sn_id; 
+
+mydb=# INSERT INTO distributors (did, dname) 
+    VALUES (7, 'Redline GmbH')
+    ON CONFLICT (did) DO NOTHING;
+
+mydb=# INSERT INTO users (id, name, username, cpf, age, budget, height, born, enabled, created_at)
+    VALUES (DEFAULT, 'Ciclano', 'ciclano', '99999999999', 32, 78.99, 1.85, '1987-10-27', TRUE, '2020-03-08 12:34:44') RETURNING id;
+
+mydb=# SELECT * FROM users LIMIT 2 OFFSET 1;
+
+# https://www.postgresql.org/docs/12/functions.html
+
+# Concate String
+mydb=# SELECT ('Michael' || ' ' ||  'Pedrotti');
+
+# Concate string ignoring nullable values
+mydb=# SELECT CONCAT('Michael', ' ', 'Pedrotti', NULL);
+
+mydb=# SELECT UPPER('Michael Pedrotti');
+
+# Just current date
+mydb=# SELECT NOW()::DATE;
+
+# Years
+mydb=# SELECT AGE(TIMESTAMP '1985-11-12') AS age;
+
+# https://www.postgresql.org/docs/12/functions-datetime.html#FUNCTIONS-DATETIME-EXTRACT
+# Century
+mydb=# SELECT EXTRACT(CENTURY FROM TIMESTAMP '2001-02-16 20:38:40');
+
+mydb=# SELECT TO_CHAR(NOW(), 'DD/MM/YYYY');
+
+# real value to formated string
+mydb=# SELECT TO_CHAR(128.3::REAL, '999D99');
+
+
+mydb=# CREATE VIEW users_with_theirs_social_networks AS SELECT 
+        a.name AS "user_name", 
+        c.name AS "social_newtork" 
+    FROM users AS a
+    JOIN user_socialnetworks AS b ON a.id = b.user_id
+    JOIN social_network AS c ON c.id = b.sn_id; 
+
+# SQL/DDL = Data Definition Language   ( create, alter, drop )
+# SQL/DML = Data Manipulation Language ( insert, update, delete, select )
+
+# Schemas
+mydb=# CREATE SCHEMA myschema;
+
+mydb=# \dt myschema.*;
+
+mydb=# CREATE TABLE myschema.social_network (
+    id SERIAL NOT NULL,
+    name varchar(100) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+# Constraint CHECK
+mydb=# CREATE TEMPORARY TABLE myschema.temp (
+
+    column VARCHAR(255) NOT NULL CHECK(column <> '')
+);
+
+mydb=# ALTER TABLE myschema.temp RENAME TO myschema.temp2;
+
+mydb=# ALTER TABLE myschema.temp RENAME column TO column2;
+
+# " column delimiter
+# ' string delimiter
+
+mydb=# DELETE FROM curso
+    USING categoria
+    WHERE categoria.id = curso.categoria_id
+    AND categoria.nome = 'Teste';
+
+mydb=# UPDATE cursos_programacao SET nome = 'AAA' 
+    FROM cursos WHERE cursos_programacao.curso_id = cursos.id
+    AND curos.id < 10;
+
+mydb=# START TRANSACTION;
+mydb=# DELETE FROM social_network WHERE id > 0;
+mydb=# ROLLBACK;
+
+# alias for START TRANSACTION
+mydb=# BEGIN;
+mydb=# DELETE FROM social_network WHERE id = 1;
+mydb=# COMMIT;
+
+
+mydb=# CREATE SEQUENCE myseq;
+mydb=# SELECT CURRVAL('myseq');
+mydb=# SELECT NEXTVAL('myseq');
+
+mydb=# CREATE TEMPORARY TABLE auto (
+    id INTEGER PRIMARY KEY DEFAULT NEXTVAL('myseq'),
+    name varchar(30) NOT NULL
+);
+
+mydb=# CREATE TEMPORARY TABLE movie (
+    id SERIAL PRIMARY KEY,
+    name varchar(30) NOT NULL,
+    category VARCHAR(255) CHECK(category IN('SciFi', 'Comedy', 'Action'))
+);
+
+mydb=# CREATE TEMPORARY TABLE movie (
+    id SERIAL PRIMARY KEY,
+    name varchar(30) NOT NULL,
+    category ENUM('SciFi', 'Comedy', 'Action')
+);
+
+mydb=# CREATE TYPE myCategory AS ENUM('SciFi', 'Comedy', 'Action');
+mydb=# CREATE TEMPORARY TABLE movie (
+    id SERIAL PRIMARY KEY,
+    name varchar(30) NOT NULL,
+    category myCategory
+);
+
+# ETL
+
+# PL/pgSQL
+
+#
+# Server Programing
+#
+
+mydb=# CREATE FUNCTION my_one() RETURNS INTEGER AS 'SELECT 1;' LANGUAGE SQL;
+
+mydb=# SELECT my_one();
+
+mydb=# CREATE FUNCTION my_sum(first INTEGER, second INTEGER) RETURNS INTEGER AS ' SELECT first + second; ' LANGUAGE SQL;
+
+mydb=# SELECT my_sum(3, 2);
+
+mydb=# DROP FUNCTION my_sum;
+
+mydb=# CREATE FUNCTION my_sum(INTEGER, INTEGER) RETURNS INTEGER AS ' SELECT $1 + $2; ' LANGUAGE SQL;
+
+mydb=# CREATE OR REPLACE FUNCTION my_double(DECIMAL(10, 2)) RETURNS DECIMAL AS $$ 
+    SELECT $1 * 2 AS double;
+$$ LANGUAGE SQL;
+
+mydb=# SELECT my_double(5);
+
+mydb=# CREATE OR REPLACE FUNCTION my_collection() RETURNS users AS $$ 
+    SELECT 3, 'Ciclano', 'ciclano', '12345678910', 35, 99.90, 1.82, '1984-08-27', TRUE, '2020-02-08 12:34:45';
+$$ LANGUAGE SQL;
+
+mydb=# SELECT * FROM  my_collection();
+
+
+mydb=# CREATE OR REPLACE FUNCTION my_users() RETURNS SETOF users AS $$ 
+    SELECT * FROM users WHERE enabled = TRUE;
+$$ LANGUAGE SQL;
+
+mydb=# SELECT * FROM  my_users();
+
+#
+# input or output
+#
+mydb=# CREATE OR REPLACE FUNCTION my_in_or_out(IN first INTEGER, IN second INTEGER, OUT plus INTEGER, OUT mult INTEGER) AS $$ 
+    SELECT first + second AS plus, first * second AS mult
+$$ LANGUAGE SQL;
+
+mydb=# SELECT * FROM  my_in_or_out(15, 5);
+
+mydb=# CREATE TYPE my_result AS (plus INTEGER, mult INTEGER);
+
+mydb=# CREATE OR REPLACE FUNCTION my_in_or_out2(IN first INTEGER, IN second INTEGER) RETURNS my_result AS $$ 
+    SELECT first + second AS plus, first * second AS mult
+$$ LANGUAGE SQL;
+
+mydb=# SELECT * FROM  my_in_or_out2(15, 5);
+
+# 
+# PL/pgSQL - Procedural Language/PostgreSQL
+#
+
+mydb=# CREATE OR REPLACE FUNCTION my_first_pgsql() RETURNS INTEGER AS $$
+    BEGIN
+        RETURN 1;
+    END 
+$$ LANGUAGE plpgsql; 
+
+mydb=# SELECT * FROM  my_first_pgsql();
+
+
+mydb=# CREATE OR REPLACE FUNCTION my_second_pgsql() RETURNS INTEGER AS $$
+    DECLARE
+        my_var INTEGER DEFAULT 3;
+    BEGIN
+        my_var := my_var * 2;
+        RETURN my_var;
+    END 
+$$ LANGUAGE plpgsql; 
+
+mydb=# SELECT * FROM  my_second_pgsql();
+
+
+
+mydb=# CREATE OR REPLACE FUNCTION my_third_pgsql() RETURNS users AS $$
+    BEGIN
+       RETURN ROW(15, 'Fulano', 'fulano', '99999999977', 33, 78.99, 1.83, '1987-10-27', TRUE, '2020-03-08 12:34:44')::users;
+    END 
+$$ LANGUAGE plpgsql; 
+
+mydb=# SELECT * FROM  my_third_pgsql();
+
+
+mydb=# CREATE OR REPLACE FUNCTION my_fourth_pgsql() RETURNS social_network AS $$
+    DECLARE
+        row social_network;
+    BEGIN
+        SELECT 3, 'Facebook' INTO row;
+        RETURN row;
+    END 
+$$ LANGUAGE plpgsql; 
+
+mydb=# SELECT * FROM  my_fourth_pgsql();
+
+
+mydb=# CREATE OR REPLACE FUNCTION my_fivetheen_pgsql() RETURNS SETOF social_network AS $$
+    BEGIN
+        RETURN QUERY SELECT * FROM social_network;
+    END 
+$$ LANGUAGE plpgsql;
+
+
+mydb=# SELECT * FROM  my_fivetheen_pgsql();
+
+
+mydb=# CREATE OR REPLACE FUNCTION my_sixteenth_pgsql(NUMERIC(10, 2)) RETURNS BOOLEAN AS $$
+    BEGIN
+        IF $1 > 50.00 THEN
+            RETURN TRUE;
+        ELSE
+            RETURN FALSE;
+        END IF;
+    END
+$$ LANGUAGE plpgsql;
+
+mydb=# SELECT * FROM  my_sixteenth_pgsql(51.30);
+
+mydb=# CREATE OR REPLACE FUNCTION my_seventh_pgsql(NUMERIC(10, 2)) RETURNS BOOLEAN AS $$
+    BEGIN
+        CASE
+            WHEN $1 >= 50 AND $1 <= 60 THEN
+                RETURN TRUE;
+            WHEN $1 >= 70 AND $1 <= 80 THEN
+                RETURN TRUE;
+            ELSE
+                RETURN FALSE;
+        END CASE;
+    END
+$$ LANGUAGE plpgsql;
+
+mydb=# SELECT * FROM  my_seventh_pgsql(71.30);
+
+# RETURN NEXT - returns many rows
+mydb=# CREATE OR REPLACE FUNCTION my_times_tables(INTEGER) RETURNS SETOF VARCHAR AS $$
+    DECLARE
+        index INTEGER DEFAULT 1;    
+    BEGIN
+        LOOP
+            RETURN NEXT CONCAT($1, ' x ', index, ' = ', $1 * index);
+            index := index + 1;
+            EXIT WHEN index = 10;
+        END LOOP;
+    END
+$$ LANGUAGE plpgsql;
+
+mydb=# SELECT * FROM  my_times_tables(5);
+
+
+mydb=# CREATE OR REPLACE FUNCTION my_times_tables(INTEGER) RETURNS SETOF VARCHAR AS $$
+    DECLARE
+        index INTEGER DEFAULT 1;    
+    BEGIN
+        WHILE  index < 10 LOOP
+            RETURN NEXT CONCAT($1, ' x ', index, ' = ', $1 * index);
+            index := index + 1;
+        END LOOP;
+    END
+$$ LANGUAGE plpgsql;
+
+mydb=# SELECT * FROM  my_times_tables(3);
+
+
+mydb=# CREATE OR REPLACE FUNCTION my_times_tables(INTEGER) RETURNS SETOF VARCHAR AS $$ 
+    BEGIN
+        FOR index IN 1..9 LOOP
+            RETURN NEXT CONCAT($1, ' x ', index, ' = ', $1 * index);
+            index := index + 1;
+        END LOOP;
+    END
+$$ LANGUAGE plpgsql;
+
+mydb=# SELECT * FROM  my_times_tables(7);
+
+
+# Error
+mydb=# CREATE OR REPLACE FUNCTION my_eighth_pgsql(OUT name VARCHAR) RETURNS SETOF record AS $$ 
+    DECLARE
+        row social_network;
+    BEGIN
+        FOR row IN SELECT * FROM social_network LOOP
+            name := row.name;
+            RETURN NEXT;
+        END LOOP;
+    END
+$$ LANGUAGE plpgsql;
+
+mydb=# SELECT * FROM my_eighth_pgsql();
+
+
+mydb=# CREATE OR REPLACE FUNCTION find_or_new(IN my_name VARCHAR) RETURNS INTEGER AS $$ 
+    DECLARE
+        my_id INTEGER;
+    BEGIN
+        SELECT id INTO my_id FROM social_network  WHERE name = my_name;
+
+        IF NOT FOUND THEN
+            INSERT INTO social_network(id, name) VALUES(DEFAULT, my_name) RETURNING id INTO my_id;
+        END IF;
+
+        return my_id;
+    END
+$$ LANGUAGE plpgsql;
+
+mydb=# SELECT find_or_new('Facebook');
+
+
+mydb=# CREATE TABLE logs (
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    table_name VARCHAR(100) NOT NULL,
+    event_name VARCHAR(100) NOT NULL,
+    description varchar(255) NOT NULL   
+);
+
+
+# Triggers on Data Changes
+mydb=# CREATE OR REPLACE FUNCTION fn_log() RETURNS TRIGGER AS $$
+    BEGIN
+        INSERT INTO logs(timestamp, table_name, event_name, description) 
+        VALUES(NOW(), TG_TABLE_NAME, TG_OP, CONCAT('id=', NEW.id, ',name=', NEW.name));
+
+        IF TG_OP = 'DELETE' THEN
+            RETURN OLD;
+        ELSE
+            RETURN NEW;
+        END IF;
+    END
+$$ LANGUAGE plpgsql;
+
+mydb=# CREATE TRIGGER on_insert_sn AFTER INSERT ON social_network
+    FOR EACH ROW EXECUTE FUNCTION fn_log();
+
+mydb=# DROP TRIGGER on_insert_sn ON social_network;
+
+mydb=# SELECT * FROM information_schema.triggers;
+
+mydb=# BEGIN;
+mydb=# INSERT INTO social_network VALUES(22, 'New Twitter');
+mydb=# ROLLBACK;
+
+# https://www.postgresql.org/docs/12/plpgsql-errors-and-messages.html
+# 42.9. Errors and Messages
+
+mydb=# CREATE OR REPLACE FUNCTION my_nineth_pgsql() RETURNS INTEGER AS $$
+    DECLARE
+        my_id INTEGER;
+    BEGIN
+        INSERT INTO social_network VALUES(1, 'Twitter', 'Column not exists') RETURNING id INTO my_id;
+        RETURN my_id;
+    EXCEPTION
+        WHEN undefined_column THEN
+            RETURN 0;
+    END
+$$ LANGUAGE plpgsql;
+
+# Using error code
+# EXCEPTION WHEN SQLSTATE 'P0004' THEN
+
+# EXCEPTION WHEN OTHERS THEN
+
+# Raise exception executes a rollback
+mydb=# CREATE OR REPLACE FUNCTION find_or_fail(IN my_name VARCHAR) RETURNS INTEGER AS $$ 
+    DECLARE
+        my_id INTEGER;
+    BEGIN
+        SELECT id INTO my_id FROM social_network  WHERE name = my_name;
+
+        IF NOT FOUND THEN
+             RAISE EXCEPTION '% was not found.', my_name;
+        END IF;
+
+        return my_id;
+    END
+$$ LANGUAGE plpgsql;
+
+mydb=# SELECT find_or_fail('Rotten Tomatoes');
+
+mydb=# CREATE OR REPLACE FUNCTION find_or_fail(IN my_name VARCHAR) RETURNS INTEGER AS $$ 
+    DECLARE
+        my_id INTEGER DEFAULT 0;
+    BEGIN
+        SELECT id INTO my_id FROM social_network  WHERE name = my_name;
+
+        IF NOT FOUND THEN
+             RAISE NOTICE '% was not found.', my_name;
+        END IF;
+
+        return my_id;
+    END
+$$ LANGUAGE plpgsql;
+
+mydb=# SELECT find_or_fail('Rotten Tomatoes');
+
+# https://www.postgresql.org/docs/12/plpgsql-errors-and-messages.html
+# 42.9.2. Checking Assertions
+
+
+mydb=# CREATE OR REPLACE FUNCTION bigger_then_ten(IN my_number INTEGER) RETURNS BOOLEAN AS $$ 
+    BEGIN
+       ASSERT my_number > 10;
+       RETURN TRUE;
+    END
+$$ LANGUAGE plpgsql;
+
+mydb=# SELECT bigger_then_ten(11);
+mydb=# SELECT bigger_then_ten(8);
+
+
+# https://www.postgresql.org/docs/12/plpgsql-control-structures.html
+# 42.6.9. Obtaining Execution Location Information
+
+mydb=# CREATE OR REPLACE FUNCTION fn_first_step() RETURNS INTEGER AS $$
+    DECLARE
+        stack text;
+    BEGIN
+        GET DIAGNOSTICS stack = PG_CONTEXT;
+        RAISE NOTICE E'--- Call Stack ---\n%', stack;
+        RETURN 1;
+    END;
+$$ LANGUAGE plpgsql;
+
+mydb=# CREATE OR REPLACE FUNCTION fn_second_step() RETURNS INTEGER AS $$
+    BEGIN
+      RETURN fn_first_step();
+    END;
+$$ LANGUAGE plpgsql;
+
+mydb=# SELECT fn_second_step();
+
+
+# https://www.postgresql.org/docs/12/plpgsql-cursors.html
+# 42.7. Cursors
+
+
+# variable refcursor
+mydb=# CREATE OR REPLACE FUNCTION fn_get_cursor() RETURNS refcursor AS $$
+    DECLARE    
+        my_cursor refcursor;
+    BEGIN
+        OPEN my_cursor  FOR SELECT name FROM social_network WHERE id > 10;
+        RETURN my_cursor;
+    END;
+$$ LANGUAGE plpgsql;
+
+# befor FOR instruction on OPEN, you can use:
+# NO SCROLL - only go ahead ( DEFAULT )
+# SCROLL - move in both sides
+
+mydb=# CREATE OR REPLACE FUNCTION fn_get_name_from_cursor() RETURNS VARCHAR AS $$
+    DECLARE    
+        my_cursor refcursor := fn_get_cursor();
+        my_name VARCHAR;
+    BEGIN
+        FETCH LAST FROM my_cursor INTO my_name;
+        FETCH NEXT FROM my_cursor INTO my_name;
+        FETCH PRIOR FROM my_cursor INTO my_name;
+        FETCH LAST FROM my_cursor INTO my_name;
+        CLOSE my_cursor;
+
+        RETURN my_name;
+    END;
+$$ LANGUAGE plpgsql;
+
+# FETCH returns value and move the cursor pointer
+# Move command just move the cursor point position
+
+# MOVE LAST FROM my_cursor;
+
+mydb=# SELECT fn_get_name_from_cursor();
+
+# DO - execute an anonymous code block
+# You can teste blocks of code
+mydb=# DO $$
+    DECLARE
+        my_id INTEGER;
+        my_name VARCHAR;
+    BEGIN
+        SELECT MAX(id) INTO my_id  FROM social_network;
+        SELECT name INTO my_name FROM social_network WHERE id = my_id;
+
+        RAISE NOTICE 'Last social network is %', my_name;
+    END;
+$$;
+
+# IDE DataGrip for Postgres
+
+
+# https://www.postgresql.org/docs/12/creating-cluster.html
+# 18.2. Creating a Database Cluster
+
+$ initdb -D /usr/local/pgsql/data102030
+# 18.3. Starting the Database Server
+$ postgres -D /usr/local/pgsql/data
+$ postgres -D /usr/local/pgsql/data > /tmp/postgres.log 2>&1 &
+
+# login as postgres user
+$ su postgres
+
+# pg_ctl is a utility to initialize, start, stop, or control a PostgreSQL server.
+$ pg_ctl status
+$ pg_ctl stop
+$ pg_ctl start -l /tmp/postgres.log
+
+# login as postgres and start a local server with log path
+$ su postgres -c 'pg_ctl start -D /usr/local/pgsql/data -l /tmp/postgres.log'
+
+$ echo $PGDATA
+# /var/lib/postgresql/data
+# default data directory
+
+# https://www.postgresql.org/docs/12/runtime-config-logging.html#RUNTIME-CONFIG-LOGGING-WHERE
+# 19.8.1. Where to Log
+$ vi /var/lib/postgresql/data/postgresql.conf
+
+# log_connections=yes
+# log_destination=stderr
+
+# MVCC - MultiVersion Concurrency Control
+
+mydb=# SELECT pg_relation_size('users');
+
+mydb=# SELECT pg_size_pretty(pg_relation_size('users'));
+
+# Auto Vacuum is a background process
+
+# Remove dead records and compact other data records
+mydb=# VACUUM FULL;
+
+# update statistics about the selected table
+mydb=# VACUUM ANALYSE users;
+
+# cold backup = stop service and backup it
+# hot backup = not stop sevice and backup it
+
+# logic backup = copy only structures and data
+# physical backup = copy data directory
+
+$ su postgres;
+
+# Backup
+# PostgreSQL database dump
+$ pg_dump --help
+
+# Export a backup from database
+$ pg_dump -f /tmp/mydb.sql mydb
+
+# It restores a PostgreSQL database from an archive created by pg_dump.
+$ pg_restore --help
+
+# Import a backup to database
+$ pg_restore -f /tmp/mydb.tar.gz mydb
+
+# Import a backup as text/plain
+$ pgsql mydb < /tmp/mydb.sql
+
+mydb=# EXPLAIN SELECT * from users WHERE budget > 90.00;
+# Seq Scan on users  (cost=0.00..11.25 rows=33 width=723)
+# Filter: (budget > 90.00)
+
+mydb=# CREATE INDEX idx_users_budget ON users(budget);
+
+mydb=# EXPLAIN SELECT * from users WHERE budget > 90.00;
+# Seq Scan on users  (cost=0.00..1.04 rows=1 width=723)
+# Filter: (budget > 90.00)
+
+$ su postgres;
+
+# pg_hba - Host Base Access
+$ vim /var/lib/postgresql/data/pg_hba.conf
+
+# host mydb postgres 172.17.0.3/32 trust
+
+$ pg_ctl restart
+
+# https://www.postgresql.org/docs/12/user-manag.html
+# Chapter 21. Database Roles
+
+# https://www.postgresql.org/docs/12/sql-createrole.html
+mydb=# CREATE ROLE my_role LOGIN;
+mydb=# DROP ROLE my_role;
+
+# this role you can login
+mydb=# CREATE USER my_user PASSWORD '123456';
+
+$ docker exec -it postgres-12 psql -h 127.0.0.1 -U my_user mydb -W 123456
+
+# https://cursos.alura.com.br/degree/certificate/e639c083-2f89-40ea-9474-97fb36ea8acb
+
