@@ -17,11 +17,11 @@ export default function(){
   const [rows, setRows] = useState([]);
   let [data, setData] = useState({});
 
-  const setValue = function(e){
+  const onChangeData = function(e){
 
     let field = e.target;
 
-    if((field.type === 'checkbox' || field.type == 'radio') && field.checked){
+    if((field.type === 'checkbox' || field.type === 'radio') && field.checked){
 
       data[field.name] = field.value;
     }
@@ -59,7 +59,7 @@ export default function(){
       }
     });
 
-
+    // https://jasonwatmore.com/post/2021/09/19/react-hook-form-set-form-values-in-useeffect-hook-after-async-data-load
     fetch('http://localhost:9090/user', {
       method: 'DELETE',
       body: new URLSearchParams(data)
@@ -83,12 +83,6 @@ export default function(){
 
   const submit = async function(){
 
-    // let body = new FormData();
-    //
-    // for (let [name, value] of Object.entries(data)){
-    //   body.append(name, value);
-    // }
-
 
     fetch('http://localhost:9090/user', {
       method: 'POST',
@@ -110,7 +104,48 @@ export default function(){
 
   };
 
-  //console.log('rows',rows);
+  const load = function(){
+
+    let arr = Array.from(document.querySelectorAll("input[name^='id['"));
+
+    arr = arr.filter(function(field){ return field.checked; });
+
+    if(arr.length === 0){
+
+      alert('Select one row');
+      return;
+    }
+
+    let field = arr.shift();
+
+    handleShow();
+
+
+    fetch('http://localhost:9090/user/' + field.value, { method: 'GET' })
+      .then(function(result){
+
+          return result.json();
+      })
+      .then(function(result){
+
+        if(!result.success){
+          alert(result.msg);
+          return;
+        }
+
+        console.log(result);
+
+        setData(result.data);
+      });
+  };
+
+  const create = function(){
+
+    // https://reactjs.org/docs/forms.html
+    handleShow();
+    setData({});
+  };
+
 
   return (
     <React.Fragment>
@@ -123,10 +158,10 @@ export default function(){
       </Breadcrumb>
 
       <ButtonGroup aria-label="Basic example" style={{"marginBottom":"1rem"}}>
-        <Button variant="secondary" onClick={handleShow}>
+        <Button variant="secondary" onClick={create}>
           <FontAwesomeIcon icon={faPlusCircle} /> Add
         </Button>
-        <Button variant="secondary">
+        <Button variant="secondary" onClick={load}>
           <FontAwesomeIcon icon={faEdit} /> Edit
         </Button>
         <Button variant="secondary" onClick={remove}>
@@ -169,18 +204,20 @@ export default function(){
          <Modal.Body>
           <Form>
 
+            <Form.Control type="hidden" name="id" defaultValue={data.id} />
+
             <Form.Group className="mb-3">
               <Form.Label>Name</Form.Label>
-              <Form.Control type="text" name="name" onChange={e => setValue(e)} />
+              <Form.Control type="text" name="name" defaultValue={data.name} onChange={e => onChangeData(e)} />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>E-mail</Form.Label>
-              <Form.Control type="email" name="email" onChange={e => setValue(e)} />
+              <Form.Control type="email" name="email" defaultValue={data.email} onChange={e => onChangeData(e)} />
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Check type="checkbox" name="active" value="Y" label="Active" />
+              <Form.Check type="checkbox" name="active" defaultValue={data.active} value="Y" label="Active" />
             </Form.Group>
 
             </Form>

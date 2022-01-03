@@ -61,7 +61,7 @@ export default function(){
     let { name, value } = e.target;
 
 
-    setStateData(function(state){ return {...state, name: value}; });
+    setStateData(function(state){ return {...state, [name]: value}; });
   };
 
   const onClickSave = function(e){
