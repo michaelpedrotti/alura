@@ -1,0 +1,115 @@
+# apache ant ( build )
+# apache ivy ( dependencies )
+# apache maven ( build + dependencies )
+
+# generate a pom.xml for a generic project
+$ mvn archetype:generate  \
+  -D"artifactId"=my-project \ #name of the project
+  -D"groupId"=domain.xyz \ #your domain
+  -D"interactiveMode"=false \ #yes to all questions
+  -D"archetypeArtifactId"=maven-archetype-quickstart #project model
+
+# generate a web project
+mvn archetype:generate \
+  -D"artifactId"=http \
+  -D"groupId"=domain.xyz \
+  -D"archetypeArtifactId"=maven-archetype-webapp \
+  -D"interactiveMode"=false
+
+#
+#├── pom.xml
+#├── src
+#│   ├── main
+#│   │   ├── java
+#│   │   │   └── xyz
+#│   │   │       └── Product.java
+#│   │   └── resources
+#│   └── test
+#│       ├── java
+#│       └── resources
+#└── target
+#    ├── classes
+#    │   ├── META-INF
+#    │   │   ├── MANIFEST.MF
+#    │   │   └── maven
+#    │   │       └── xyz
+#    │   │           └── java-maven
+#    │   │               ├── pom.properties
+#    │   │               └── pom.xml
+#    │   └── xyz
+#    │       └── Product.class
+#    └── test-classes
+#
+# <scope /> 
+# compile = dependency is used only at compile event
+# provided = dependency is not package, because server application will provide that dependency
+# runtime = 
+# system = 
+# test = dependecy is used only at test event
+
+# https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream/1.4.14
+
+# mvn [goal] [goal]
+
+# clean target directories
+$ mvn clean
+
+# compile all classes into /target/classes
+$ mvn compile
+
+$ mvn clean compile
+
+# clean, compile, test and package
+$ mvn clean package
+
+# https://maven.apache.org/plugins/index.html
+
+# mvn [plugin]:[goal]
+$ mvn jetty:run
+
+# add plugin jacoco
+$ mvn test
+# ./target/site/jacoco/index.html
+
+# Add proxy to maven
+$ touch ~/.m2/settings.xml
+
+$ vi ~/.m2/settings.xml
+
+#<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+#  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+#  <proxies>
+#        <proxy>
+#            <id>genproxy</id>
+#            <active>true</active>
+#            <protocol>http</protocol>
+#            <host>127.0.0.1</host>
+#            <port>3218</port>
+#            <username>username</username>
+#            <password>password</password>
+#        </proxy>
+#    </proxies>
+#</settings>
+#
+#
+# Java 9 > you can create modules
+#
+# <packaging>pom</packaging>
+# <modules>
+#   <module>java-web</module>
+#   <module>java-cli</module>
+#</modules>
+#
+# each sub-project pom you need set the parent project
+#
+# <parent>
+#   <groupId>domain.xyz</groupId>
+#   <artifactId>java-web</artifactId>
+#   <version>1.0</version>
+# </parent>
+
+
+
+
+
