@@ -3,6 +3,8 @@ package xyz.repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.TypedQuery;
+
 import xyz.entity.OrderEntity;
 import xyz.entity.rows.OrderRow;
 
@@ -51,6 +53,17 @@ public class OrderRepository extends AbstractRepository {
 				+ "ORDER BY i.total DESC ";
 		// java.lang.String, long, java.time.LocalDateTime
 		return this.getEm().createQuery(pql, OrderRow.class).getResultList();
+	}
+	
+	public OrderEntity fetchWithClient(Long id) {
+		
+		// JOIN FETCH changes Lazy behavior to Eager behavior
+		String pql = "SELECT o FROM OrderEntity o JOIN FETCH o.client WHERE o.id = :id ";
+		
+		TypedQuery<OrderEntity> query = this.getEm().createQuery(pql, OrderEntity.class);
+		
+		query.setParameter("id", id);
+		return query.getSingleResult();
 	}
 
 	static public OrderRepository newInstance() {

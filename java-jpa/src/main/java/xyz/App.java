@@ -54,13 +54,17 @@ public class App {
 	
 	public static void fetch() {
 		
+		System.out.println("app:fetch");
+		
 //		List<CategoryEntity> rows = CategoriesRepository.newInstance().all();
 //		List<ProductEntity> rows = ProductRepository.newInstance().fetchCategoryName("phone");
-		List<ProductEntity> rows = ProductRepository.newInstance().fetchCategoryName2("phone");
-		
-		System.out.println("total: " + rows.size());
-		
-		rows.forEach(row -> System.out.println(row.getName()));
+//		List<ProductEntity> rows = ProductRepository.newInstance().fetchCategoryName2("phone");
+//		
+//		System.out.println("total: " + rows.size());
+//		
+//		rows.forEach(row -> System.out.println(row.getName()));
+
+		OrderEntity entity = OrderRepository.newInstance().fetchWithClient(3L);
 		
 	}
 	
