@@ -3,6 +3,7 @@ package xyz.repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.NamedQuery;
 import javax.persistence.TypedQuery;
 
 import xyz.entity.ProductEntity;
@@ -57,6 +58,18 @@ public class ProductRepository extends AbstractRepository {
 		String pql = String.format("SELECT p FROM %s p WHERE p.category.name = :name", ProductEntity.class.getName());
 		
 		TypedQuery<ProductEntity> query = this.getEm().createQuery(pql, ProductEntity.class);
+		
+		query.setParameter("name", name);
+		
+		return query.getResultList();
+	}
+	
+	/**
+	 * with NamedQuery on ProductEntity
+	 */
+	public List<ProductEntity> fetchCategoryName2(String name){
+
+		TypedQuery<ProductEntity> query = this.getEm().createNamedQuery("productByCategory", ProductEntity.class);
 		
 		query.setParameter("name", name);
 		

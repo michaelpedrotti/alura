@@ -8,6 +8,7 @@ import xyz.entity.ClientEntity;
 import xyz.entity.OrderEntity;
 import xyz.entity.OrderItemEntity;
 import xyz.entity.ProductEntity;
+import xyz.entity.rows.OrderRow;
 import xyz.repository.CategoriesRepository;
 import xyz.repository.ClientRepository;
 import xyz.repository.OrderRepository;
@@ -54,7 +55,8 @@ public class App {
 	public static void fetch() {
 		
 //		List<CategoryEntity> rows = CategoriesRepository.newInstance().all();
-		List<ProductEntity> rows = ProductRepository.newInstance().fetchCategoryName("phone");
+//		List<ProductEntity> rows = ProductRepository.newInstance().fetchCategoryName("phone");
+		List<ProductEntity> rows = ProductRepository.newInstance().fetchCategoryName2("phone");
 		
 		System.out.println("total: " + rows.size());
 		
@@ -113,14 +115,35 @@ public class App {
 		}
 	}
 	
+	private static void sum() {
+		
+		OrderRepository repo = OrderRepository.newInstance();
+
+		System.out.println("sum:total: " + repo.sum());
+		
+//		List<Object[]> score = repo.score();
+		
+//		for(Object[] row : repo.score()) {
+//						
+//			System.out.format("product: %s, total: %s, last sell: %s\n", row[0], row[1], row[2]);
+//		}
+		
+		
+		for(OrderRow row : repo.score2()) {
+			
+			System.out.format("product: %s, total: %s, last sell: %s\n", row.getName(), row.getTotal(), row.getLastSellDate());
+		}
+	}
+	
 	public static void main(String[] args) {
 
 		System.out.println("app:startup");
 		
 //		insert();
-//		fetch();
+		fetch();
 //		find();
-		order();
+//		order();
+//		sum();
 		
 		System.out.println("app:finish");
 	}

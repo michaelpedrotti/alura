@@ -10,10 +10,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="products")
+@NamedQuery(name="productByCategory", query="SELECT p FROM ProductEntity p WHERE p.category.name = :name")
 public class ProductEntity extends AbstractEntity {
 	
 	@Id
