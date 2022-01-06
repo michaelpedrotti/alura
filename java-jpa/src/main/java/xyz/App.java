@@ -3,13 +3,11 @@ package xyz;
 import java.math.BigDecimal;
 import java.util.List;
 
-import xyz.entity.CategoryEntity;
 import xyz.entity.ClientEntity;
 import xyz.entity.OrderEntity;
 import xyz.entity.OrderItemEntity;
 import xyz.entity.ProductEntity;
 import xyz.entity.rows.OrderRow;
-import xyz.repository.CategoriesRepository;
 import xyz.repository.ClientRepository;
 import xyz.repository.OrderRepository;
 import xyz.repository.ProductRepository;
@@ -21,24 +19,29 @@ public class App {
 		System.out.println("app:insert");
 		
 //		ProductRepository repo = ProductRepository.newInstance();
-		CategoriesRepository repo = CategoriesRepository.newInstance();
+//		CategoriesRepository repo = CategoriesRepository.newInstance();
+		ClientRepository repo = ClientRepository.newInstance();
 		
 		repo.beginTransaction();
 		
 		try {
 
-			repo.save(CategoryEntity.newInstance().setName("Hello World"));
-			repo.commit();
-			
+		
 //			ProductEntity entity = ProductEntity.newInstance()
 //				.setName("Samsung Galaxy A11")
 //				.setDescription("Android v11")
 //				.setPrice(new BigDecimal(800.00))
 //				.setCategory(CategoriesRepository.newInstance().findOrNew(2L).setName("Phone"))
 //				.setCreatedAt(LocalDateTime.now());
-//		
-//			repo.save(entity);
-//			repo.commit();			
+//
+//			CategoryEntity entity = CategoryEntity.newInstance().setName("Hello World");
+			
+			ClientEntity entity = ClientEntity.newInstance()
+				.setName("Beltrano")
+				.setDoc("888877776");
+			
+			repo.save(entity);
+			repo.commit();			
 		}
 		catch(Exception e) {
 
@@ -64,8 +67,20 @@ public class App {
 //		
 //		rows.forEach(row -> System.out.println(row.getName()));
 
-		OrderEntity entity = OrderRepository.newInstance().fetchWithClient(3L);
+//		OrderEntity entity = OrderRepository.newInstance().fetchWithClient(3L);
 		
+		List<ProductEntity> rows = ProductRepository.newInstance().fetch(null, new BigDecimal(800.00), null);
+		
+		// Cannot use Gson with Lazy Load
+//		Gson gson = new Gson();
+		
+	
+		for(ProductEntity row : rows) {
+			
+//			System.out.println(gson.toJson(row));
+			
+			System.out.println(row);
+		}
 	}
 	
 	public static void find() {
@@ -143,8 +158,8 @@ public class App {
 
 		System.out.println("app:startup");
 		
-//		insert();
-		fetch();
+		insert();
+//		fetch();
 //		find();
 //		order();
 //		sum();

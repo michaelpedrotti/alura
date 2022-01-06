@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import xyz.entity.OrderEntity;
 import xyz.entity.rows.OrderRow;
@@ -23,6 +26,7 @@ public class OrderRepository extends AbstractRepository {
 			.createQuery(pql, BigDecimal.class)// javax.persistence.TypedQuery
 				.getSingleResult();// java.math.BigDecimal
 	}
+	
 	
 	public List<Object[]> score() {
 		

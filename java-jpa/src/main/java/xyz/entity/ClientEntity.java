@@ -1,6 +1,7 @@
 package xyz.entity;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,9 +16,12 @@ public class ClientEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
 	private Long id;
+
+	@Embedded
+	private UserEntity user = new UserEntity();
 	
-	@Column(name="name")
-	private String name;
+//	@Column(name="name")
+//	private String name;
 	
 	@Column(name="document")
 	private String doc;
@@ -29,10 +33,10 @@ public class ClientEntity {
 		this.id = id;
 	}
 	public String getName() {
-		return name;
+		return this.user.getName();
 	}
 	public ClientEntity setName(String name) {
-		this.name = name;
+		this.user.setName(name);
 		return this;
 	}
 	public String getDoc() {

@@ -1,11 +1,18 @@
 package xyz.repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.NamedQuery;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
+import xyz.entity.OrderEntity;
 import xyz.entity.ProductEntity;
 
 public class ProductRepository extends AbstractRepository {
@@ -74,6 +81,33 @@ public class ProductRepository extends AbstractRepository {
 		query.setParameter("name", name);
 		
 		return query.getResultList();
+	}
+	
+	public List<ProductEntity> fetch(String name, BigDecimal price, LocalDateTime createdAt) {
+		
+		CriteriaBuilder builder = this.getEm().getCriteriaBuilder();
+		CriteriaQuery<ProductEntity> query = builder.createQuery(ProductEntity.class);
+		Root<ProductEntity> from = query.from(ProductEntity.class);
+		Predicate filter = builder.and();
+		
+		if(name != null && !name.trim().isEmpty()) {
+			
+			filter = builder.and(filter, builder.equal(from.get("name"), name));
+		}
+		
+		if(price != null) {
+			
+			filter = builder.and(filter, builder.equal(from.get("price"), price));
+		}
+		
+		if(createdAt != null) {
+			
+			filter = builder.and(filter, builder.equal(from.get("createdAt"), createdAt));
+		}
+		
+		query.where(filter);
+		
+		return this.getEm().createQuery(query).getResultList();
 	}
 	
 	static public ProductRepository newInstance() {

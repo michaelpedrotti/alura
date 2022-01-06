@@ -1,5 +1,6 @@
 package xyz.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -17,8 +18,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name="products")
 @NamedQuery(name="productByCategory", query="SELECT p FROM ProductEntity p WHERE p.category.name = :name")
-public class ProductEntity extends AbstractEntity {
+public class ProductEntity extends AbstractEntity implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
@@ -96,5 +99,17 @@ public class ProductEntity extends AbstractEntity {
 	
 	static public ProductEntity newInstance() {
 		return new ProductEntity();
+	}
+	
+	@Override
+	public String toString() {
+
+		return String.format("id: %s, name: %s, desc: %s, price: %s, createAt: %s",
+			this.getId(),
+			this.getName(),
+			this.getDescription(),
+			this.getPrice(),
+			this.getCreatedAt()
+		);
 	}
 }
