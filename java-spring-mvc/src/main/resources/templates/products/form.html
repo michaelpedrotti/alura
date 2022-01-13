@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="~{layout/header::head}"></head>
+<body>
+	<nav th:replace="~{layout/header::navbar}"></nav>
+	
+	<pre th:text="${#vars.getVariable('productRequest')}"></pre>
+
+	<div class="container-fluid">
+		<form th:object="${productRequest}" action="/products/save" method="post" style="width:20rem">
+			<div class="form-group">
+				<label>Name</label> 
+				<input th:field="*{name}" th:errorclass="is-invalid" type="text" class="form-control" />
+				<small th:errors="*{name}" class="form-text text-danger"></small>
+			</div>
+			<div class="form-group">
+				<label>Price</label> 
+				<input th:field="*{price}" th:errorclass="is-invalid" type="number" class="form-control" />
+				<small th:errors="*{price}" class="form-text text-danger"></small>
+			</div>
+			<div class="form-group">
+				<label>Description</label> 
+				<textarea th:field="*{desc}" th:errorclass="is-invalid" class="form-control" rows="3"></textarea>
+				<small th:errors="*{desc}" class="form-text text-danger"></small>
+			</div>
+			<br />
+			<button type="submit" class="btn btn-primary">Save</button>
+		</form>
+	</div>
+</body>
+</html>
