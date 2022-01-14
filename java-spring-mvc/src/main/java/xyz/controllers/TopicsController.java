@@ -1,37 +1,32 @@
 package xyz.controllers;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 import xyz.jpa.repositories.CoursesRepository;
 import xyz.jpa.repositories.TopicoRepository;
-import xyz.modelo.Curso;
 import xyz.modelo.Topico;
 import xyz.request.TopicsRequest;
 
@@ -55,6 +50,7 @@ public class TopicsController {
 	 */
 //	@RequestMapping(value="/topics", method=RequestMethod.POST)
 	@PostMapping
+	@CacheEvict(value="ukTopicFech", allEntries=true)
 //	@ResponseBody
 	public ResponseEntity<TopicsRequest> create(@RequestBody @Valid TopicsRequest request, UriComponentsBuilder builder){
 		
@@ -80,6 +76,7 @@ public class TopicsController {
 	}
 	
 	@DeleteMapping("/{id}")
+	@CacheEvict(value="ukTopicFech", allEntries=true)
 	public ResponseEntity<?> remove(@PathVariable Long id) {
 		
 		Optional<Topico> optional = this.repo.findById(id);
@@ -134,12 +131,25 @@ public class TopicsController {
 	}
 	
 	/**
+	 * 
+	 * @see https://docs.spring.io/spring-data/rest/docs/2.0.0.M1/reference/html/paging-chapter.html
+	 * @see https://stackoverflow.com/questions/52355490/no-primary-or-default-constructor-found-for-interface-org-springframework-data-d
+	 */
+	@GetMapping("/with-pageable")
+	@Cacheable(value="ukTopicFech")
+	public Page<Topico> fetch21(@PageableDefault(size=10) Pageable pageable){
+		
+		return this.repo.findAll(pageable);
+	}
+	
+	/**
 	 * requires annotation EnableSpringDataWebSupport on application startup
 	 * 
 	 * ?page=0&size=10&sort=id,asc&sort=dataCriacao,desc
 	 */
 	@GetMapping
-	public Page<Topico> fetch(String titulo/*, PageRequest pageable*/){
+	@Cacheable(value="ukTopicFech")
+	public Page<Topico> fetch(String titulo){
 				
 		PageRequest pageable = PageRequest.of(0, 10);
 		
