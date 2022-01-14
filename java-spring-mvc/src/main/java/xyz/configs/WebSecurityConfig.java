@@ -3,13 +3,18 @@ package xyz.configs;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
@@ -20,6 +25,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private DataSource dataSource;
 	
+	@Autowired
+	private TokenServiceConfig token;
 	
 	@Autowired
 	private UserDetailsConfig service;
@@ -43,10 +50,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		
 //		// Basic authentication custom	
 		 http.authorizeRequests()
-		 	.antMatchers("/api/**").permitAll()
+//		 	.antMatchers("/api/**").permitAll()
+		 	.antMatchers(HttpMethod.POST, "/api/login").permitAll()
+		 	.antMatchers("/login/**").permitAll()
+		 	.antMatchers("/actuator/**").permitAll()
 			.anyRequest().authenticated()
 				.and()
-					.formLogin();
+					.csrf().disable()
+					// Disable session support
+					.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+					
+					.and().addFilterBefore(new OnePerRequestFilterConfig(token), UsernamePasswordAuthenticationFilter.class);	
+//					.formLogin();
 //					.formLogin(form -> {
 //						form.loginPage("/login")
 //							.defaultSuccessUrl("/", true)
@@ -92,6 +107,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		super.configure(web);
 	}
 	
+	@Override
+	@Bean
+	protected AuthenticationManager authenticationManager() throws Exception {
+		return super.authenticationManager();
+	}
+
 //	@Bean
 //	@Override
 //	public UserDetailsService userDetailsService() {

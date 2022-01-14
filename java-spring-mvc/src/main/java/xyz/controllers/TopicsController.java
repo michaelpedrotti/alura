@@ -30,6 +30,10 @@ import xyz.jpa.repositories.TopicoRepository;
 import xyz.modelo.Topico;
 import xyz.request.TopicsRequest;
 
+/**
+ * 
+ * @see https://www.baeldung.com/spring-boot-json
+ */
 //@Controller
 //@RequestMapping("/api")
 @RestController
