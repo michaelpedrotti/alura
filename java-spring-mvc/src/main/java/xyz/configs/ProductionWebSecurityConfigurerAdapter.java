@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,7 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@Profile("production")
+public class ProductionWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 	
 	
 	@Autowired
@@ -53,6 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //		 	.antMatchers("/api/**").permitAll()
 		 	.antMatchers(HttpMethod.POST, "/api/login").permitAll()
 		 	.antMatchers("/login/**").permitAll()
+		 	.antMatchers(HttpMethod.DELETE,  "/api/topics/*").hasRole("ADMIN")
 		 	.antMatchers("/actuator/**").permitAll()
 			.anyRequest().authenticated()
 				.and()

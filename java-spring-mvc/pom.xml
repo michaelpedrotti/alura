@@ -13,6 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>java-spring-mvc</name>
 	<description>Demo project for Spring Boot</description>
+	<!-- <packaging>war</packaging> -->
 	<properties>
 		<java.version>11</java.version>
 	</properties>
@@ -50,6 +51,15 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+		
+		<!--  removes tomcat from final package and JavaSpringMvcApplication extends SpringBootServletInitializer -->
+		<!-- 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -83,7 +93,15 @@
 	</dependencies>
 
 	<build>
+		<finalName>myapp</finalName>
 		<plugins>
+			<plugin>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <configuration>
+			        <source>11</source>
+			        <target>11</target>
+			    </configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
